@@ -16,6 +16,7 @@ before_script:
 script:
   - npm run lint
   - npm run typecheck
+  - npm run test:coverage
   
 after_script:
   - chmod +x ./scripts/ci/after.sh

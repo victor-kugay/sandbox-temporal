@@ -5,6 +5,7 @@ module.exports = {
     rootDir: 'src',
     collectCoverageFrom: ['**/*.(t|j)s'],
     coveragePathIgnorePatterns: ['node_modules', '/__tests__/'],
+    coverageDirectory: '<rootDir>/../coverage',
     transform: {
         '.+\\.(t|j)s$': '@swc/jest', // '.+\\.(t|j)s$': 'ts-jest',
     },
