@@ -22,6 +22,7 @@
         "format": "prettier --write {src,scripts}",
         "typecheck": "tsc --noEmit",
         "test": "jest --runInBand",
+        "test:coverage": "jest --runInBand --coverage",
         "prepare": "husky install",
         "lint-staged": "lint-staged"
     },
