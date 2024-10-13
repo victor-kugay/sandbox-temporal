@@ -1,0 +1,59 @@
+# temporal: 7730-7739
+version: '3'
+
+volumes:
+    temporal_postgres_volume:
+
+services:
+    temporal-sandbox-postgresql:
+      image: postgres:14.7
+      container_name: temporal-sandbox-postgresql
+      environment:
+        POSTGRES_PASSWORD: temporal
+        POSTGRES_USER: temporal
+      ports:
+        - 9730:5432
+      volumes:
+        - temporal_postgres_volume:/var/lib/postgresql/data
+
+    temporal-sandbox-server:
+      image: temporalio/auto-setup:1.25.1
+      container_name: temporal-sandbox-server
+      depends_on:
+        - temporal-sandbox-postgresql
+      environment:
+        - DB=postgres12
+        - DB_PORT=5432
+        - POSTGRES_USER=temporal
+        - POSTGRES_PWD=temporal
+        - POSTGRES_SEEDS=temporal-sandbox-postgresql
+        - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+        - TEMPORAL_AUTH_ENABLED=false
+      ports:
+        - 9731:7233
+      volumes:
+        - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+      labels:
+        kompose.volume.type: configMap
+
+    temporal-sandbox-admin-tools:
+      image: temporalio/admin-tools:1.25
+      container_name: temporal-sandbox-admin-tools
+      depends_on:
+        - temporal-sandbox-server
+      environment:
+        - TEMPORAL_ADDRESS=temporal:7233
+        - TEMPORAL_CLI_ADDRESS=temporal:7233
+      stdin_open: true
+      tty: true
+
+    temporal-sandbox-ui:
+      image: temporalio/ui:2.31.2
+      container_name: temporal-sandbox-ui
+      depends_on:
+        - temporal-sandbox-server
+      environment:
+        - TEMPORAL_ADDRESS=temporal-sandbox-server:7233
+        - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+      ports:
+        - 9732:8080

@@ -1,0 +1,1 @@
+HOOK=true  npm run typecheck && npm run test
