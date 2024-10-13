@@ -1,0 +1,11 @@
+{
+    "*.{js,ts}": [
+        "yarn lint --fix",
+        "prettier --write",
+        "git add -A"
+    ],
+    "*.json": [
+        "prettier --write",
+        "git add -A"
+    ]
+}
