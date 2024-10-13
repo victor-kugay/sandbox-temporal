@@ -1,0 +1,22 @@
+---
+
+env: 
+  global:
+    - CC_TEST_REPORTER_ID=043d2fe92b6b32b1f59ba0c1ad2cc15dc4ef6f1caa96e95ab67daca5342c0fa4
+
+language: node_js
+
+node_js:
+  - node
+
+before_script:
+  - chmod +x ./scripts/ci/before.sh
+  - ./scripts/ci/before.sh
+
+script:
+  - npm run lint
+  - npm run typecheck
+  
+after_script:
+  - chmod +x ./scripts/ci/after.sh
+  - ./scripts/ci/after.sh
