@@ -36,8 +36,8 @@ afterAll(async () => {
 describe(`[Workflow]`, () => {
     test('HelloWorldWorkflow TestCase1', async () => {
         const activities: IActivities = {
-            hello: jest.fn().mockResolvedValue(undefined),
-            world: jest.fn().mockResolvedValue(undefined),
+            firstActivity: jest.fn().mockResolvedValue(undefined),
+            secondActivity: jest.fn().mockResolvedValue(undefined),
         };
 
         testWorker = await Worker.create({
@@ -59,6 +59,6 @@ describe(`[Workflow]`, () => {
             return await handle.result();
         });
 
-        expect(result).toBe('success');
+        expect(result).toBe('fail');
     });
 });

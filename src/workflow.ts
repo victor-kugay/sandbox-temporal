@@ -1,39 +1,42 @@
-import {
-    proxyActivities,
-    setHandler,
-    condition,
-    CancelledFailure,
-} from '@temporalio/workflow';
+import {proxyActivities, setHandler, condition} from '@temporalio/workflow';
 
 import {type IActivities} from './activities';
-import {helloWorldSignal} from './signals';
+import {firstSignal, secondSignal} from './signals';
 
-const {hello, world} = proxyActivities<IActivities>({
+const {firstActivity, secondActivity} = proxyActivities<IActivities>({
     startToCloseTimeout: '1 minute',
 });
 
 export async function temporalHelloWorldWorkflow(): Promise<string> {
-    let helloWorldReceived: boolean | null = null;
+    let latestSignal: string = 'idle';
 
-    setHandler(helloWorldSignal, () => {
-        helloWorldReceived = true;
+    setHandler(firstSignal, () => {
+        latestSignal = 'first-signal';
     });
 
-    try {
-        await hello();
+    setHandler(secondSignal, () => {
+        latestSignal = 'second-signal';
+    });
 
-        await condition(() => helloWorldReceived === true, '1m');
-
-        await world();
-
-        return 'success';
-    } catch (error) {
-        if (error instanceof CancelledFailure) {
-            console.log('Timer cancelled 👍');
-
-            return 'cancelled';
-        } else {
-            throw error;
-        }
+    const firstSignalInTime = await condition(
+        () => latestSignal === 'first-signal',
+        '1m',
+    );
+    if (!firstSignalInTime) {
+        return 'fail';
     }
+
+    await firstActivity();
+
+    const secondSignalInTime = await condition(
+        () => latestSignal === 'second-signal',
+        '1m',
+    );
+    if (!secondSignalInTime) {
+        return 'fail';
+    }
+
+    await secondActivity();
+
+    return 'success';
 }
