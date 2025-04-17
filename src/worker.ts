@@ -1,6 +1,6 @@
 import {NativeConnection, Worker} from '@temporalio/worker';
 
-import {type IActivities, hello, world} from './activities';
+import {type IActivities, firstActivity, secondActivity} from './activities';
 import {env} from './config';
 import {TEMPORAL_HELLO_WORLD_TASK_QUEUE} from './constants';
 
@@ -14,7 +14,7 @@ async function main(): Promise<void> {
         address: env.TEMPORAL_HOST,
     });
 
-    const activities: IActivities = {hello, world};
+    const activities: IActivities = {firstActivity, secondActivity};
 
     const worker = await Worker.create({
         connection,

@@ -5,6 +5,7 @@ import {Connection, Client} from '@temporalio/client';
 import {TEMPORAL_HELLO_WORLD_TASK_QUEUE} from './constants';
 import {temporalHelloWorldWorkflow} from './workflow';
 import {env} from './config';
+import {firstSignal, secondSignal} from './signals';
 
 main().catch((err) => {
     console.error(err);
@@ -24,5 +25,9 @@ async function main(): Promise<void> {
 
     console.log(`Started workflow ${handle.workflowId}`);
 
-    console.log(await handle.result());
+    await handle.signal(secondSignal);
+
+    await new Promise((resolve) => setTimeout(resolve, 5_000));
+
+    await handle.signal(firstSignal);
 }
